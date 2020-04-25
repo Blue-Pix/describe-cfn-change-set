@@ -1,0 +1,17 @@
+name: 'describe change set'
+description: 'describe change set'
+inputs:
+  stack_name:
+    description: 'cfn stack name'
+    required: true
+  template_body:
+    description: 'cfn template file name'
+    required: true
+outputs:
+  result:
+    description: 'json output of describe-change-set API'
+  result_file_path:
+    description: 'file path where json output written'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'

@@ -1,0 +1,10 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Resources:
+  queue1:
+    Type: AWS::SQS::Queue
+    Properties: 
+      QueueName: foo
+  queue2:
+    Type: AWS::SQS::Queue
+    Properties: 
+      QueueName: bar

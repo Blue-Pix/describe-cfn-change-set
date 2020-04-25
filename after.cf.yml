@@ -1,0 +1,17 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Resources:
+  queue1:
+    Type: AWS::SQS::Queue
+    Properties: 
+      QueueName: foo
+      DelaySeconds: 1
+      VisibilityTimeout: 31
+      MessageRetentionPeriod: 30
+  queue2:
+    Type: AWS::SQS::Queue
+    Properties: 
+      QueueName: bar2
+  queue3:
+    Type: AWS::SQS::Queue
+    Properties: 
+      QueueName: foobar
