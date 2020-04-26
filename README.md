@@ -30,7 +30,7 @@ cf. https://github.com/actions/upload-artifact
 
   - name: describe change set
     id: describe-change-set
-    uses: Blue-Pix/describe-cfn-change-set
+    uses: Blue-Pix/describe-cfn-change-set@v1
     with:
       stack_name: omochi
       template_body: after.cf.yml
@@ -45,11 +45,111 @@ cf. https://github.com/actions/upload-artifact
       path: ${{ steps.describe-change-set.outputs.result_file_path }}
 ```
 
+ex. result file
+```json
+{
+    "Changes": [
+        {
+            "Type": "Resource",
+            "ResourceChange": {
+                "Action": "Modify",
+                "LogicalResourceId": "queue1",
+                "PhysicalResourceId": "https://sqs.ap-northeast-1.amazonaws.com/xxxxxxx/foo",
+                "ResourceType": "AWS::SQS::Queue",
+                "Replacement": "False",
+                "Scope": [
+                    "Properties"
+                ],
+                "Details": [
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "VisibilityTimeout",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Static",
+                        "ChangeSource": "DirectModification"
+                    },
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "MessageRetentionPeriod",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Static",
+                        "ChangeSource": "DirectModification"
+                    },
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "DelaySeconds",
+                            "RequiresRecreation": "Never"
+                        },
+                        "Evaluation": "Static",
+                        "ChangeSource": "DirectModification"
+                    }
+                ]
+            }
+        },
+        {
+            "Type": "Resource",
+            "ResourceChange": {
+                "Action": "Modify",
+                "LogicalResourceId": "queue2",
+                "PhysicalResourceId": "https://sqs.ap-northeast-1.amazonaws.com/xxxxxxx/bar",
+                "ResourceType": "AWS::SQS::Queue",
+                "Replacement": "True",
+                "Scope": [
+                    "Properties"
+                ],
+                "Details": [
+                    {
+                        "Target": {
+                            "Attribute": "Properties",
+                            "Name": "QueueName",
+                            "RequiresRecreation": "Always"
+                        },
+                        "Evaluation": "Static",
+                        "ChangeSource": "DirectModification"
+                    }
+                ]
+            }
+        },
+        {
+            "Type": "Resource",
+            "ResourceChange": {
+                "Action": "Add",
+                "LogicalResourceId": "queue3",
+                "ResourceType": "AWS::SQS::Queue",
+                "Scope": [],
+                "Details": []
+            }
+        }
+    ],
+    "ChangeSetName": "xxxxxxx",
+    "ChangeSetId": "arn:aws:cloudformation:ap-northeast-1:xxxxxxx:changeSet/xxxxxxx/xxxxxxx",
+    "StackId": "arn:aws:cloudformation:ap-northeast-1:xxxxxxx:stack/xxxxxxx/xxxxxxx",
+    "StackName": "xxxxxxx",
+    "Description": null,
+    "Parameters": null,
+    "CreationTime": "2020-04-26T04:55:01.851000+00:00",
+    "ExecutionStatus": "AVAILABLE",
+    "Status": "CREATE_COMPLETE",
+    "StatusReason": null,
+    "NotificationARNs": [],
+    "RollbackConfiguration": {
+        "RollbackTriggers": []
+    },
+    "Capabilities": [],
+    "Tags": null
+}
+```
+
 See [action.yml](https://github.com/Blue-Pix/describe-cfn-change-set/blob/master/action.yml) for the full documentation for this action's inputs and outputs.
 
 # Environment variables
-- `stack_name`:  CloudFormation stack name to apply change. (required)
-- `template_body`:  CloudFormation template file path. (required)
+- `stack_name`:  CloudFormation stack name to apply change. (**required**)
+- `template_body`:  CloudFormation template file path. (**required**)
 
 # Credentials and Region
 Use the [`aws-actions/configure-aws-credentials` action](https://github.com/aws-actions/configure-aws-credentials) to configure the GitHub Actions environment with environment variables containing AWS credentials and your desired region.
@@ -77,7 +177,7 @@ This action requires the following minimum set of permissions:
 
 The Action calls `create-change-set` api with random uuid as change set name first, then `describe-change-set`.<br>
 After writing output to file, remove temporary change set by `delete-change-set`.<br>
-Note. do not restrict change-set-name in `Resource` condition because change-set-name is random.<br>
+**Note.** do not restrict change-set-name in `Resource` condition because change-set-name is random.<br>
 ex. ac7c731cd-b210-4e1a-a355-804847ee9156
 
 # License Summary
