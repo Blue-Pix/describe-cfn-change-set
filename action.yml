@@ -1,5 +1,9 @@
-name: 'describe change set'
-description: 'describe change set'
+name: 'describe-cfn-change-set'
+description: 'describe cfn change set'
+author: 'sakuraya (@Blue-Pix)'
+branding:
+  icon: 'box'  
+  color: 'orange'
 inputs:
   stack_name:
     description: 'cfn stack name'
