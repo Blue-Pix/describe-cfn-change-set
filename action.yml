@@ -12,10 +12,14 @@ inputs:
     description: 'cfn template file name'
     required: true
 outputs:
+  change_set_name:
+    description: 'created change set name (uuid)'
   result:
     description: 'json output of describe-change-set API'
   result_file_path:
     description: 'file path where json output written'
+  diff_file_path:
+    description: 'as HTML formatted change set diff for Github comment'
 runs:
   using: 'docker'
   image: 'Dockerfile'

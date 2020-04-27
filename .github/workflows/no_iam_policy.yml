@@ -1,5 +1,8 @@
 on:
-  push:
+  pull_request:
+    branches:
+      - master
+    types: opened
 jobs:
   list-change-stack:
     runs-on: ubuntu-latest

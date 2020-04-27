@@ -14,4 +14,11 @@ Resources:
   queue3:
     Type: AWS::SQS::Queue
     Properties: 
-      QueueName: foobar
+      QueueName: fizz
+      Tags:
+        - tag1
+        - tag2
+  queue5:
+    Type: AWS::SQS::Queue
+    Properties: 
+      QueueName: fizzbuzz

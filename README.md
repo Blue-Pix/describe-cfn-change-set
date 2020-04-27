@@ -3,8 +3,15 @@ Describe cfn stack diff using `describe-change-set` API.<br>
 cf. https://docs.aws.amazon.com/cli/latest/reference/cloudformation/describe-change-set.html
 
 This action exports json output as an Github Action output variable that actions running later in a job can use.<br>
-Additionally, exports file path which json output written. You can use it as you like, for exmaple as an artifact.<br>
-cf. https://github.com/actions/upload-artifact
+Additionally, exports table formatted diff file. Below shows how to use it to post pull request comment.<br>
+
+ex. describe change set diff like management console.
+
+![screenshot](screenshot.png)
+
+![screenshot](screenshot2.png)
+
+`Changed Properties` is not shown on management console, but exists in `describe-change-set` API response.
 
 ## Table of Contents
 
@@ -34,116 +41,32 @@ cf. https://github.com/actions/upload-artifact
     with:
       stack_name: omochi
       template_body: after.cf.yml
-  
-  - name: echo output
-    run: echo "Result was ${{ steps.describe-change-set.outputs.result }}"
-  
-  - name: archive change set
+
+  - name: archive diff
     uses: actions/upload-artifact@v1
     with:
-      name: change-set-archive
-      path: ${{ steps.describe-change-set.outputs.result_file_path }}
+      name: diff
+      path: ${{ steps.describe-change-set.outputs.diff_file_path }}
+
+  - name: Download diff markdown
+    uses: actions/download-artifact@v1
+    with:
+      name: diff
+
+  - name: Post comments
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      URL: ${{ github.event.pull_request.comments_url }}
+      FILE_PATH: ${{ steps.describe-change-set.outputs.diff_file_path }}
+    run: |
+      cat ${FILE_PATH} | xargs echo
+      curl -X POST \
+           -H "Authorization: token ${GITHUB_TOKEN}" \
+           -d "{\"body\": \"$(cat ${FILE_PATH} | xargs echo)\"}" \
+           ${URL}
 ```
 
-ex. result file
-```json
-{
-    "Changes": [
-        {
-            "Type": "Resource",
-            "ResourceChange": {
-                "Action": "Modify",
-                "LogicalResourceId": "queue1",
-                "PhysicalResourceId": "https://sqs.ap-northeast-1.amazonaws.com/xxxxxxx/foo",
-                "ResourceType": "AWS::SQS::Queue",
-                "Replacement": "False",
-                "Scope": [
-                    "Properties"
-                ],
-                "Details": [
-                    {
-                        "Target": {
-                            "Attribute": "Properties",
-                            "Name": "VisibilityTimeout",
-                            "RequiresRecreation": "Never"
-                        },
-                        "Evaluation": "Static",
-                        "ChangeSource": "DirectModification"
-                    },
-                    {
-                        "Target": {
-                            "Attribute": "Properties",
-                            "Name": "MessageRetentionPeriod",
-                            "RequiresRecreation": "Never"
-                        },
-                        "Evaluation": "Static",
-                        "ChangeSource": "DirectModification"
-                    },
-                    {
-                        "Target": {
-                            "Attribute": "Properties",
-                            "Name": "DelaySeconds",
-                            "RequiresRecreation": "Never"
-                        },
-                        "Evaluation": "Static",
-                        "ChangeSource": "DirectModification"
-                    }
-                ]
-            }
-        },
-        {
-            "Type": "Resource",
-            "ResourceChange": {
-                "Action": "Modify",
-                "LogicalResourceId": "queue2",
-                "PhysicalResourceId": "https://sqs.ap-northeast-1.amazonaws.com/xxxxxxx/bar",
-                "ResourceType": "AWS::SQS::Queue",
-                "Replacement": "True",
-                "Scope": [
-                    "Properties"
-                ],
-                "Details": [
-                    {
-                        "Target": {
-                            "Attribute": "Properties",
-                            "Name": "QueueName",
-                            "RequiresRecreation": "Always"
-                        },
-                        "Evaluation": "Static",
-                        "ChangeSource": "DirectModification"
-                    }
-                ]
-            }
-        },
-        {
-            "Type": "Resource",
-            "ResourceChange": {
-                "Action": "Add",
-                "LogicalResourceId": "queue3",
-                "ResourceType": "AWS::SQS::Queue",
-                "Scope": [],
-                "Details": []
-            }
-        }
-    ],
-    "ChangeSetName": "xxxxxxx",
-    "ChangeSetId": "arn:aws:cloudformation:ap-northeast-1:xxxxxxx:changeSet/xxxxxxx/xxxxxxx",
-    "StackId": "arn:aws:cloudformation:ap-northeast-1:xxxxxxx:stack/xxxxxxx/xxxxxxx",
-    "StackName": "xxxxxxx",
-    "Description": null,
-    "Parameters": null,
-    "CreationTime": "2020-04-26T04:55:01.851000+00:00",
-    "ExecutionStatus": "AVAILABLE",
-    "Status": "CREATE_COMPLETE",
-    "StatusReason": null,
-    "NotificationARNs": [],
-    "RollbackConfiguration": {
-        "RollbackTriggers": []
-    },
-    "Capabilities": [],
-    "Tags": null
-}
-```
+for example, you set trigger on `pull_request`, this action posts a comment which describes change set like management console.<br>
 
 See [action.yml](https://github.com/Blue-Pix/describe-cfn-change-set/blob/master/action.yml) for the full documentation for this action's inputs and outputs.
 
