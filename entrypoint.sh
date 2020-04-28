@@ -11,7 +11,7 @@ fi
 for i in `seq 1 5`; do
   aws cloudformation describe-change-set --change-set-name=$uuid --stack-name=$INPUT_STACK_NAME --output=json > $uuid.json 
   status=$(cat $uuid.json | jq -r '.Status')
-  if [ ${status} = "CREATE_COMPLETE" ]; then    
+  if [ ${status} = "CREATE_COMPLETE" ] || [ ${status} = "FAILED" ]; then    
     break
   else
     echo "change set is now creating..."
@@ -24,11 +24,15 @@ if [ $? -ne 0 ]; then
   echo "[ERROR] failed to delete change set."
 fi
 
-if [ ${status} != "CREATE_COMPLETE" ]; then
+if [ ${status} != "CREATE_COMPLETE" ] && [ ${status} != "FAILED" ]; then
   echo "[ERROR] failed to create change set."
   exit 1
 fi
 
 result=$(cat $uuid.json | jq -c)
+echo "::set-output name=change_set_name::$uuid"
 echo "::set-output name=result::$result"
 echo "::set-output name=result_file_path::$uuid.json"
+
+python pretty_format.py $uuid $INPUT_STACK_NAME
+echo "::set-output name=diff_file_path::$uuid.html"

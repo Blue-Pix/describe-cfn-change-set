@@ -1,16 +1,11 @@
-FROM alpine:3.10
+FROM python:3
 
-RUN apk -v --update add \
-        python \
-        py-pip \
-        groff \
-        less \
-        mailcap \
-        jq \
-        && \
-    pip install --upgrade awscli python-magic && \
-    apk -v --purge del py-pip && \
-    rm /var/cache/apk/*
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
+  && unzip awscliv2.zip \
+  && ./aws/install
+
+RUN apt-get update \
+  && apt-get install -y less jq
 
 COPY entrypoint.sh /entrypoint.sh
 

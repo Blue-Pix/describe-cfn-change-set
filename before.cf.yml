@@ -8,3 +8,11 @@ Resources:
     Type: AWS::SQS::Queue
     Properties: 
       QueueName: bar
+  queue3:
+    Type: AWS::SQS::Queue
+    Properties: 
+      QueueName: fizz
+  queue4:
+    Type: AWS::SQS::Queue
+    Properties: 
+      QueueName: buzz
