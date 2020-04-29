@@ -8,5 +8,6 @@ RUN apt-get update \
   && apt-get install -y less jq
 
 COPY entrypoint.sh /entrypoint.sh
+COPY pretty_format.py /pretty_format.py
 
 ENTRYPOINT ["/entrypoint.sh"]
