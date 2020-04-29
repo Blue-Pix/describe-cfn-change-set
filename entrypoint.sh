@@ -29,7 +29,7 @@ if [ ${status} != "CREATE_COMPLETE" ] && [ ${status} != "FAILED" ]; then
   exit 1
 fi
 
-result=$(cat $uuid.json | jq -c)
+result=$(cat $uuid.json | jq -c .)
 echo "::set-output name=change_set_name::$uuid"
 echo "::set-output name=result::$result"
 echo "::set-output name=result_file_path::$uuid.json"
