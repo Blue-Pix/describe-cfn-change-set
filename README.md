@@ -37,7 +37,7 @@ ex. describe change set diff like management console.
 
   - name: describe change set
     id: describe-change-set
-    uses: Blue-Pix/describe-cfn-change-set@v2
+    uses: Blue-Pix/describe-cfn-change-set@v2.1
     with:
       stack_name: omochi
       template_body: after.cf.yml
