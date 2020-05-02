@@ -34,6 +34,5 @@ echo "::set-output name=change_set_name::$uuid"
 echo "::set-output name=result::$result"
 echo "::set-output name=result_file_path::$uuid.json"
 
-ls
 python /pretty_format.py $uuid $INPUT_STACK_NAME
 echo "::set-output name=diff_file_path::$uuid.html"
