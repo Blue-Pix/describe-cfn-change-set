@@ -29,10 +29,10 @@ if [ ${status} != "CREATE_COMPLETE" ] && [ ${status} != "FAILED" ]; then
   exit 1
 fi
 
-result=$(cat $uuid.json | jq -c)
+result=$(cat $uuid.json | jq -c .)
 echo "::set-output name=change_set_name::$uuid"
 echo "::set-output name=result::$result"
 echo "::set-output name=result_file_path::$uuid.json"
 
-python pretty_format.py $uuid $INPUT_STACK_NAME
+python /pretty_format.py $uuid $INPUT_STACK_NAME
 echo "::set-output name=diff_file_path::$uuid.html"
