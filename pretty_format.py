@@ -11,11 +11,11 @@ class ChangeSet:
     action = self.changes['ResourceChange']['Action']
     color = ""
     if self.changes['ResourceChange']['Action'] == "Modify":
-      color = "<img src=\"https://placehold.it/12/0073bb/0073bb?text=+\" />"
+      color = "&#9888;" # Warning symbol
     elif self.changes['ResourceChange']['Action'] == "Add":
-      color = "<img src=\"https://placehold.it/12/1d8102/1d8102?text=+\" />"
+      color = "&#128994;" # Green circle
     elif self.changes['ResourceChange']['Action'] == "Remove":
-      color = "<img src=\"https://placehold.it/12/d13212/d13212?text=+\" />"
+      color = "&#128997;" # Red square
     return "%s %s" % (color, action)
 
   def logical_resource_id(self):
