@@ -30,9 +30,9 @@ if [ ${status} != "CREATE_COMPLETE" ] && [ ${status} != "FAILED" ]; then
 fi
 
 result=$(cat $uuid.json | jq -c .)
-echo "::set-output name=change_set_name::$uuid"
-echo "::set-output name=result::$result"
-echo "::set-output name=result_file_path::$uuid.json"
+echo "change_set_name=$uuid" >> $GITHUB_OUTPUT
+echo "result=$result" >> $GITHUB_OUTPUT
+echo "result_file_path=$uuid.json" >> $GITHUB_OUTPUT
 
 python /pretty_format.py $uuid $INPUT_STACK_NAME
-echo "::set-output name=diff_file_path::$uuid.html"
+echo "diff_file_path=$uuid.html" >> $GITHUB_OUTPUT
